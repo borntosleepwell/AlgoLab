@@ -1,73 +1,80 @@
-# React + TypeScript + Vite
+# ⚡ AlgoLab // Global Visualizer Sandbox
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+![AlgoLab Hero Banner](https://img.shields.io/badge/Status-Live_on_Google_Cloud-green?style=for-the-badge&logo=googlecloud)
+![JuaraVibeCoding](https://img.shields.io/badge/Submission-%23JuaraVibeCoding-purple?style=for-the-badge&logo=google)
 
-Currently, two official plugins are available:
+**AlgoLab** is an interactive, brutalist-styled educational laboratory designed to strip away the complexities of computer science concepts and make algorithms visually digestible. Built for the **Google for Developers #JuaraVibeCoding** hackathon.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+---
 
-## React Compiler
+## 🛑 The Problem
+As an informatics engineering student, staring at raw code makes it incredibly difficult to grasp abstract logic. Traversals like DFS and BFS, or the theoretical rules of Formal Grammars, often feel like black boxes. Existing tools are mostly static, boring, and require rigid manual inputs that ruin the learning vibe.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 💡 The Solution
+AlgoLab acts as a bridge between abstract theory and visual understanding. 
+By integrating **Google's Gemini Vision AI**, this web app allows students to literally upload a photo of a hand-drawn graph from their notebook. The AI parses the image, understands the nodes and edges, and AlgoLab immediately animates the algorithmic traversal (BFS/DFS) step-by-step.
 
-## Expanding the ESLint configuration
+It’s built by a student, for students. 
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+---
 
-```js
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
+## 🛠️ Core Features
 
-      // Remove tseslint.configs.recommended and replace with this
-      tseslint.configs.recommendedTypeChecked,
-      // Alternatively, use this for stricter rules
-      tseslint.configs.strictTypeChecked,
-      // Optionally, add this for stylistic rules
-      tseslint.configs.stylisticTypeChecked,
+### 1. Graph Intelligence (Vision AI)
+- **Image-to-Graph:** Upload a sketch of a graph, and Gemini AI will translate it into an adjacency list automatically.
+- **Interactive Traversal:** Watch BFS and DFS algorithms traverse the graph node-by-node with visual stepping.
+- **Deep Analysis:** Get AI-generated, step-by-step narration of the traversal process in both English and Indonesian.
 
-      // Other configs...
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+### 2. Formal Automata (CFG Sandbox)
+- Transform complex Context-Free Grammars (CFG) into simpler forms.
+- Eliminates useless symbols and empty productions with visual feedback.
+- Test custom strings against the grammar rules in real-time.
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+---
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+## 🎨 Design Philosophy
+The entire user interface is built on the principles of **Swiss Modernism x Brutalist Minimalism**.
+- High contrast, monochromatic palettes with stark accents.
+- Exposed structural grids and raw typography (monospace & sans-serif clashes).
+- Micro-animations and hover-inversions to make the platform feel like a living, breathing software terminal.
 
-export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{ts,tsx}'],
-    extends: [
-      // Other configs...
-      // Enable lint rules for React
-      reactX.configs['recommended-typescript'],
-      // Enable lint rules for React DOM
-      reactDom.configs.recommended,
-    ],
-    languageOptions: {
-      parserOptions: {
-        project: ['./tsconfig.node.json', './tsconfig.app.json'],
-        tsconfigRootDir: import.meta.dirname,
-      },
-      // other options...
-    },
-  },
-])
-```
+---
+
+## ⚙️ Tech Stack
+- **Frontend:** React 19, TypeScript, Vite
+- **Styling:** Tailwind CSS v4, Framer Motion
+- **AI Integration:** `@google/generative-ai` (Gemini 2.5 Flash / Pro Vision)
+- **Deployment:** Google Cloud Run (Containerized via Docker + Nginx)
+
+---
+
+## 🚀 How to Run Locally
+
+If you want to spin up AlgoLab on your own machine:
+
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/borntosleepwell/AlgoLab.git
+   cd AlgoLab
+   ```
+
+2. **Install dependencies**
+   ```bash
+   npm install
+   ```
+
+3. **Set up Environment Variables**
+   Create a `.env` file in the root directory and add your Gemini API Key:
+   ```env
+   VITE_GEMINI_API_KEY=AIzaSyYourSecretKeyHere...
+   ```
+
+4. **Run the development server**
+   ```bash
+   npm run dev
+   ```
+   Open `http://localhost:5173` in your browser.
+
+---
+
+*“If you can imagine it, you can vibe-code it.”* ✌️
