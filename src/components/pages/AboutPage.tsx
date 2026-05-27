@@ -97,11 +97,6 @@ export function AboutPage() {
                 alt="Creator Profile"
                 className="absolute inset-0 w-full h-full object-cover grayscale opacity-70 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-700"
               />
-
-              {/* Decorative label */}
-              <div className="absolute bottom-4 left-4 z-20 font-mono text-[10px] text-white uppercase tracking-[0.2em] bg-black px-2 py-1 border border-[#333333]">
-                 // FOUNDER_PROFILE
-              </div>
             </div>
 
             {/* Main Core Mission Statement */}
