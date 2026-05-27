@@ -1,0 +1,332 @@
+@import "tailwindcss";
+
+@theme {
+  --color-mono-50: #fafafa;
+  --color-mono-100: #f4f4f5;
+  --color-mono-200: #e4e4e7;
+  --color-mono-300: #d4d4d8;
+  --color-mono-400: #a1a1aa;
+  --color-mono-500: #71717a;
+  --color-mono-600: #52525b;
+  --color-mono-700: #3f3f46;
+  --color-mono-800: #27272a;
+  --color-mono-900: #18181b;
+  --color-mono-950: #000000;
+
+  --font-sans: 'Inter', system-ui, sans-serif;
+  --font-serif: 'Instrument Serif', ui-serif, Georgia, serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  :root {
+    --background: #ffffff;
+    --foreground: #000000;
+    --border: var(--color-mono-200);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #000000;
+      --foreground: #ffffff;
+      --border: var(--color-mono-800);
+    }
+  }
+
+  body {
+    background-color: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    margin: 0;
+    min-height: 100vh;
+  }
+
+  ::selection {
+    background-color: var(--foreground);
+    color: var(--background);
+  }
+}
+
+@layer utilities {
+  .bg-dot-grid {
+    background-image: radial-gradient(circle, var(--foreground) 1px, transparent 1px);
+    background-size: 24px 24px;
+    opacity: 0.15;
+  }
+  
+  .dark .bg-dot-grid {
+    opacity: 0.2;
+  }
+
+  .scrollbar-minimal::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  
+  .scrollbar-minimal::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  
+  .scrollbar-minimal::-webkit-scrollbar-thumb {
+    background: var(--border);
+    border-radius: 3px;
+  }
+  
+  .scrollbar-minimal::-webkit-scrollbar-thumb:hover {
+    background: var(--color-mono-500);
+  }
+}
+
+/* =========================================
+   CUSTOM ANIMATIONS
+   ========================================= */
+
+/* Gradient shift animation for "Get Started" button */
+@keyframes gradient-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-shift {
+  background: linear-gradient(250deg, #2F2FE4, #162E93, #4338ca, #2F2FE4);
+  background-size: 300% 300%;
+  animation: gradient-shift 4s ease infinite;
+}
+
+/* Spin-once animation for the logo square */
+@keyframes spin-once {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.animate-spin-once {
+  animation: spin-once 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Animated underline slide-in for "learn more" */
+.underline-slide {
+  position: relative;
+  text-decoration: none;
+}
+
+.underline-slide::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.underline-slide:hover::after {
+  transform: scaleX(1);
+}
+
+/* Glowing glow for Get Started button on hover */
+.glow-gradient-hover {
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.glow-gradient-hover:hover {
+  box-shadow: 0 0 30px rgba(47, 47, 228, 0.6), 0 0 60px rgba(47, 47, 228, 0.3);
+  transform: translateY(-1px);
+}
+
+/* Moving white-grey gradient outline for the Get Started button */
+.hero-btn-container {
+  position: relative;
+  border-radius: 18px;
+  padding: 1px;
+  background: linear-gradient(
+    135deg,
+    #ffffff, #555555, #111111,
+    #888888, #ffffff, #333333, #ffffff
+  );
+  background-size: 300% 300%;
+  animation: bw-gradient-rotate 4s ease infinite;
+  box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+.hero-btn-container:hover {
+  box-shadow: 0 0 30px rgba(255, 255, 255, 0.3), 0 0 60px rgba(255, 255, 255, 0.15);
+  transform: translateY(-1px);
+}
+
+/* Lab card glowing glass shadow on hover */
+.lab-card {
+  transition: box-shadow 0.3s ease, transform 0.3s ease, background 0.3s ease;
+  border: 1px solid var(--color-mono-200);
+}
+
+.lab-card:hover, .lab-card-glow-down:hover {
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3), 0 0 20px rgba(255, 255, 255, 0.1);
+  transform: translateY(-6px);
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+}
+
+.lab-card-dark:hover {
+  box-shadow: 0 20px 60px rgba(255, 255, 255, 0.15), 0 8px 24px rgba(255, 255, 255, 0.1);
+  transform: translateY(-6px);
+}
+
+/* Navbar glassy pill hover */
+.nav-item-wrapper {
+  position: relative;
+  padding: 4px 10px;
+  border-radius: 4px;
+  transition: background 0.2s ease;
+}
+
+.nav-item-wrapper:hover {
+  background: rgba(0, 0, 0, 0.06);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.08);
+}
+
+.nav-glass-glow {
+  color: white;
+  background: rgba(255, 255, 255, 0.2);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.3), inset 0 0 0 1px rgba(255, 255, 255, 0.2);
+}
+
+/* Page transition */
+@keyframes page-in {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-enter {
+  animation: page-in 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* =========================================
+   MANUAL TOGGLE — Underline Slide Animation
+   ========================================= */
+
+.manual-toggle-btn {
+  position: relative;
+  display: inline-block;
+  text-decoration: none;
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.manual-toggle-btn::after {
+  content: '';
+  position: absolute;
+  bottom: -1px;
+  left: 0;
+  width: 100%;
+  height: 1px;
+  background-color: currentColor;
+  transform: scaleX(0);
+  transform-origin: left center;
+  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.manual-toggle-btn:hover::after {
+  transform: scaleX(1);
+}
+
+/* =========================================
+   SYSTEM LOG — Ticker Slide-up Animation
+   ========================================= */
+
+@keyframes ticker-in {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.log-ticker-entry {
+  animation: ticker-in 0.32s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+/* =========================================
+   DEEP ANALYSIS — Minimal Rounded Container
+   ========================================= */
+
+.deep-analysis-container {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background: #0a0a0a;
+}
+
+/* Glow on hover for Deep Analyze button */
+.deep-analyze-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition: box-shadow 0.4s ease, transform 0.2s ease;
+}
+
+.deep-analyze-btn:not(:disabled):hover {
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.15),
+    0 0 16px rgba(255, 255, 255, 0.12),
+    0 0 40px rgba(255, 255, 255, 0.08),
+    0 0 80px rgba(255, 255, 255, 0.04);
+  transform: translateY(-1px);
+}
+
+
+/* =========================================
+   AI ASSIST — Hover-only B&W Gradient Outline
+   ========================================= */
+
+@keyframes bw-gradient-rotate {
+  0%   { background-position: 0%   50%; }
+  50%  { background-position: 100% 50%; }
+  100% { background-position: 0%   50%; }
+}
+
+.ai-assist-container {
+  position: relative;
+  border-radius: 2px;
+  transition: all 0.3s ease;
+}
+
+.ai-assist-container::before {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: 3px;
+  background: linear-gradient(
+    135deg,
+    #ffffff, #888888, #000000,
+    #555555, #ffffff, #333333, #ffffff
+  );
+  background-size: 300% 300%;
+  animation: bw-gradient-rotate 3s ease infinite;
+  z-index: 0;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+
+.ai-assist-container:hover::before {
+  opacity: 1;
+}
+
+.ai-assist-container > * {
+  position: relative;
+  z-index: 1;
+}
