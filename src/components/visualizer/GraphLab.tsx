@@ -291,11 +291,14 @@ export function GraphLab() {
       analysisCache.current[targetLang] = result;
       setDeepAnalysis(result);
     } catch (err: any) {
+      const isRateLimit = err.message?.includes('Spam Detected') || err.message?.includes('batas harian');
       const summary = systemLog
         .filter(l => !l.isError)
         .map(l => `Step ${l.step}: ${l.text}`)
         .join('\n');
-      const fallback = `# ${algorithm} Traversal Summary\n\n## Step-by-Step Walkthrough\n${summary}\n\n## Conclusion\n[Connect Gemini API for deeper AI-generated insights]`;
+      const fallback = isRateLimit 
+        ? `> [!WARNING]\n> **RATE LIMIT EXCEEDED:** ${err.message}\n\n# ${algorithm} Traversal Summary\n\n## Step-by-Step Walkthrough\n${summary}`
+        : `# ${algorithm} Traversal Summary\n\n## Step-by-Step Walkthrough\n${summary}\n\n## Conclusion\n[Connect Gemini API for deeper AI-generated insights]`;
       analysisCache.current[targetLang] = fallback;
       setDeepAnalysis(fallback);
     } finally {
@@ -367,7 +370,7 @@ export function GraphLab() {
 
           {/* Canvas Box */}
           <div className="flex flex-col border border-border/20 bg-mono-950 overflow-hidden">
-            <div className="flex-1 min-h-[500px] lg:min-h-[640px]">
+            <div className="flex-1 min-h-[350px] md:min-h-[500px] lg:min-h-[640px]">
               <AlgorithmCanvas
                 nodes={nodes}
                 edges={edges}
@@ -378,10 +381,10 @@ export function GraphLab() {
             </div>
 
             {/* ── Bottom Row: System Log + Mixtape Controls ─────────────── */}
-            <div className="border-t border-border/20 flex flex-row items-stretch">
+            <div className="border-t border-border/20 flex flex-col md:flex-row items-stretch">
 
               {/* System Log — ticker panel */}
-              <div className="flex flex-col w-[300px] flex-shrink-0 border-r border-border/20">
+              <div className="flex flex-col w-full md:w-[300px] flex-shrink-0 border-b md:border-b-0 md:border-r border-border/20">
 
                 {/* Header */}
                 <div className="px-3 py-1.5 border-b border-border/10 font-mono text-[9px] uppercase tracking-widest text-mono-500 flex items-center gap-1.5 flex-shrink-0">
@@ -449,7 +452,7 @@ export function GraphLab() {
               </div>
 
               {/* Playback Controls — centered */}
-              <div className="flex-1 flex items-center justify-center bg-mono-950/60">
+              <div className="flex-1 flex items-center justify-center bg-mono-950/60 p-4 md:p-0">
                 <SimulationControls
                   isPlaying={isPlaying}
                   speed={speed}

@@ -338,7 +338,10 @@ export function AutomataLab() {
       analysisCache.current[targetLang] = result;
       setDeepAnalysis(result);
     } catch (err: any) {
-      const fallback = `# ${ALGO_LABEL[algorithm] ?? algorithm}\n\n## Overview\nGrammar transformed from ${initialGrammar.length} to ${finalGrammar.length} rules.\n\n[Connect Gemini API for deeper AI-generated insights.]`;
+      const isRateLimit = err.message?.includes('Spam Detected') || err.message?.includes('batas harian');
+      const fallback = isRateLimit
+        ? `> [!WARNING]\n> **RATE LIMIT EXCEEDED:** ${err.message}\n\n# ${ALGO_LABEL[algorithm] ?? algorithm}\n\n## Overview\nGrammar transformed from ${initialGrammar.length} to ${finalGrammar.length} rules.`
+        : `# ${ALGO_LABEL[algorithm] ?? algorithm}\n\n## Overview\nGrammar transformed from ${initialGrammar.length} to ${finalGrammar.length} rules.\n\n[Connect Gemini API for deeper AI-generated insights.]`;
       analysisCache.current[targetLang] = fallback;
       setDeepAnalysis(fallback);
     } finally {

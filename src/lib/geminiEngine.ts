@@ -115,7 +115,7 @@ Return ONLY valid JSON matching the schema. No explanation outside JSON.`;
 // ─── Deep analysis prompt ─────────────────────────────────────────────────────
 function buildDeepAnalysisPrompt(algorithm: string, traversalSummary: string, lang: 'EN' | 'ID'): string {
   const isID = lang === 'ID';
-  
+
   return `You are an expert computer science educator explaining graph traversal to a university student.
 
 The following is a ${algorithm} graph traversal simulation data:
@@ -130,19 +130,19 @@ Your response MUST follow this exact structure. Use these exact Markdown markers
 # [Write a concise, specific title here — e.g. "${algorithm} Traversal Analysis on Graph with N Nodes"]
 
 ## ${isID ? 'Penjelasan Algoritma' : 'Algorithm Overview'}
-${isID 
-  ? 'Jelaskan dalam satu paragraf: esensi dari algoritma yang digunakan, analogi dunia nyatanya (jika relevan), serta karakteristik utama struktur data pendukungnya (LIFO dengan Stack untuk DFS, atau FIFO dengan Queue untuk BFS) dalam konteks kasus ini.'
-  : 'Explain in one paragraph: the essence of the algorithm used, its real-world analogy (if relevant), and the key characteristics of its supporting data structure (LIFO with Stack for DFS, or FIFO with Queue for BFS) in the context of this case.'}
+${isID
+      ? 'Jelaskan dalam satu paragraf: esensi dari algoritma yang digunakan, analogi dunia nyatanya (jika relevan), serta karakteristik utama struktur data pendukungnya (LIFO dengan Stack untuk DFS, atau FIFO dengan Queue untuk BFS) dalam konteks kasus ini.'
+      : 'Explain in one paragraph: the essence of the algorithm used, its real-world analogy (if relevant), and the key characteristics of its supporting data structure (LIFO with Stack for DFS, or FIFO with Queue for BFS) in the context of this case.'}
 
 ## ${isID ? 'Aturan Penelusuran (Tie-Breaking Rule)' : 'Traversal & Tie-Breaking Rule'}
 ${isID
-  ? 'Sebutkan aturan yang digunakan jika terdapat beberapa kandidat node tetangga yang bisa dikunjungi secara bersamaan (misalnya: berdasarkan urutan alfabetis atau nilai bobot terkecil).'
-  : 'State the rule used when there are multiple neighbor node candidates that can be visited simultaneously (e.g., based on alphabetical order or smallest weight value).'}
+      ? 'Sebutkan aturan yang digunakan jika terdapat beberapa kandidat node tetangga yang bisa dikunjungi secara bersamaan (misalnya: berdasarkan urutan alfabetis atau nilai bobot terkecil).'
+      : 'State the rule used when there are multiple neighbor node candidates that can be visited simultaneously (e.g., based on alphabetical order or smallest weight value).'}
 
 ## ${isID ? 'Langkah-langkah Traversal' : 'Step-by-Step Walkthrough'}
 ${isID
-  ? 'Narasikan setiap langkah dari data simulasi secara kronologis. Gunakan format list seperti di bawah ini untuk SETIAP langkah:'
-  : 'Narrate each step from the simulation data chronologically. Use the following list format for EVERY step:'}
+      ? 'Narasikan setiap langkah dari data simulasi secara kronologis. Gunakan format list seperti di bawah ini untuk SETIAP langkah:'
+      : 'Narrate each step from the simulation data chronologically. Use the following list format for EVERY step:'}
 
 1. **${isID ? 'Langkah' : 'Step'} 1: Node \`[Nama_Node]\`**
    * **${isID ? 'Aksi' : 'Action'}:** [${isID ? 'Penjelasan singkat apa yang terjadi, node mana yang diekstrak' : 'Brief explanation of what happens, which node is extracted'}]
@@ -155,9 +155,9 @@ ${isID
 
 ## ${isID ? 'Kesimpulan & Analisis Kompleksitas' : 'Conclusion & Complexity Analysis'}
 * **${isID ? 'Urutan Hasil Traversal' : 'Final Traversal Order'}:** [${isID ? 'Tampilkan urutan akhir node yang dikunjungi, misal: A -> B -> D' : 'Show the final visited order, e.g., A -> B -> D'}]
-* **${isID ? 'Kompleksitas Waktu & Ruang' : 'Time & Space Complexity'}:** ${isID 
-  ? 'Jelaskan kompleksitas O(V+E) secara spesifik dengan memasukkan jumlah V (node) dan E (edge) aktual dari graf ini.' 
-  : 'Explain O(V+E) complexity specifically by inserting the actual number of V (nodes) and E (edges) from this graph.'}
+* **${isID ? 'Kompleksitas Waktu & Ruang' : 'Time & Space Complexity'}:** ${isID
+      ? 'Jelaskan kompleksitas O(V+E) secara spesifik dengan memasukkan jumlah V (node) dan E (edge) aktual dari graf ini.'
+      : 'Explain O(V+E) complexity specifically by inserting the actual number of V (nodes) and E (edges) from this graph.'}
 * **${isID ? 'Evaluasi Efektivitas' : 'Suitability'}:** [${isID ? 'Berikan 1-2 kalimat analisis apakah algoritma ini adalah pilihan terbaik untuk karakteristik graf tersebut.' : 'Give 1-2 sentences analyzing whether this algorithm was the best choice for this graph characteristics.'}]
 
 IMPORTANT: Use the exact markers # and ## as shown. Do not alter the headings. Maintain a professional, academic tone.`;
@@ -174,6 +174,32 @@ function fileToGenerativePart(file: File): Promise<{ inlineData: { data: string;
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+// ─── Local Rate Limiter (Anti-Spam) ──────────────────────────────────────────
+function checkRateLimit() {
+  const MAX_RPM = 10;
+  const MAX_RPD = 20;
+
+  const now = Date.now();
+  const historyRaw = localStorage.getItem('algo_gemini_usage');
+  let history: number[] = historyRaw ? JSON.parse(historyRaw) : [];
+
+  // Filter 24h
+  history = history.filter(time => now - time < 24 * 60 * 60 * 1000);
+
+  if (history.length >= MAX_RPD) {
+    throw new Error('Anda telah mencapai batas harian. Coba lagi besok.');
+  }
+
+  // Filter 1 minute
+  const requestsLastMinute = history.filter(time => now - time < 60 * 1000).length;
+  if (requestsLastMinute >= MAX_RPM) {
+    throw new Error('Terlalu banyak permintaan (Spam Detected). Tunggu 1 menit.');
+  }
+
+  history.push(now);
+  localStorage.setItem('algo_gemini_usage', JSON.stringify(history));
 }
 
 function getApiKey(): string {
@@ -195,7 +221,7 @@ function getStructuredModel(apiKey: string) {
 
 function getTextModel(apiKey: string) {
   const genAI = new GoogleGenerativeAI(apiKey);
-  return genAI.getGenerativeModel({ model: "gemini-3-flash-preview" });
+  return genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 }
 
 function parseAndValidate(jsonText: string): GeminiGraphJSON {
@@ -220,6 +246,7 @@ function parseAndValidate(jsonText: string): GeminiGraphJSON {
  * Throws NonGraphError if the image is not a graph traversal problem.
  */
 export async function analyzeGraphImage(file: File): Promise<GeminiGraphJSON> {
+  checkRateLimit();
   const apiKey = getApiKey();
   const model = getStructuredModel(apiKey);
   const imagePart = await fileToGenerativePart(file);
@@ -238,6 +265,7 @@ export async function analyzeGraphImage(file: File): Promise<GeminiGraphJSON> {
  * Throws NonGraphError if the text is not a graph traversal problem.
  */
 export async function analyzeGraphText(problemText: string, algorithm: string): Promise<GeminiGraphJSON> {
+  checkRateLimit();
   const apiKey = getApiKey();
   const model = getStructuredModel(apiKey);
 
@@ -258,6 +286,7 @@ export async function analyzeTraversal(
   steps: { currentNode?: string; visited: string[]; stack: string[]; narration: string }[],
   lang: 'EN' | 'ID' = 'EN'
 ): Promise<string> {
+  checkRateLimit();
   const apiKey = getApiKey();
   const model = getTextModel(apiKey);
 
@@ -405,23 +434,23 @@ Your response MUST follow this exact structure using these exact markers:
 
 ## ${isID ? 'Gambaran Algoritma' : 'Algorithm Overview'}
 ${isID
-  ? 'Satu paragraf menjelaskan: definisi algoritma yang digunakan, mengapa transformasi ini perlu dilakukan (urgensinya), dan apa dampak struktural utamanya terhadap aturan produksi dalam teori bahasa formal.'
-  : 'One paragraph explaining: the definition of the algorithm used, why this transformation is necessary (its urgency), and its main structural impact on production rules in formal language theory.'}
+      ? 'Satu paragraf menjelaskan: definisi algoritma yang digunakan, mengapa transformasi ini perlu dilakukan (urgensinya), dan apa dampak struktural utamanya terhadap aturan produksi dalam teori bahasa formal.'
+      : 'One paragraph explaining: the definition of the algorithm used, why this transformation is necessary (its urgency), and its main structural impact on production rules in formal language theory.'}
 
 ## ${isID ? 'Analisis Transformasi' : 'Transformation Analysis'}
 ${isID
-  ? 'Uraikan setiap langkah transformasi dari data pengubah secara kronologis. Gunakan format list berikut untuk SETIAP langkah penting:\n1. **Langkah N: [Nama Sub-Proses]**\n   * **Kondisi Awal:** Aturan produksi atau simbol yang ditargetkan.\n   * **Operasi/Aksi:** Penjelasan teknis mengenai apa yang dihapus, diganti, atau ditambahkan dan alasan logis di baliknya.\n   * **Hasil Aturan:** Tampilkan aturan produksi yang terbentuk setelah langkah ini selesai.'
-  : 'Break down each transformation step from the data chronologically. Use the following list format for EVERY significant step:\n1. **Step N: [Sub-Process Name]**\n   * **Initial State:** Target production rules or symbols.\n   * **Operation/Action:** Technical explanation of what was removed, replaced, or added, and the rationale behind it.\n   * **Resulting Rules:** Show the production rules formed after this step is completed.'}
+      ? 'Uraikan setiap langkah transformasi dari data pengubah secara kronologis. Gunakan format list berikut untuk SETIAP langkah penting:\n1. **Langkah N: [Nama Sub-Proses]**\n   * **Kondisi Awal:** Aturan produksi atau simbol yang ditargetkan.\n   * **Operasi/Aksi:** Penjelasan teknis mengenai apa yang dihapus, diganti, atau ditambahkan dan alasan logis di baliknya.\n   * **Hasil Aturan:** Tampilkan aturan produksi yang terbentuk setelah langkah ini selesai.'
+      : 'Break down each transformation step from the data chronologically. Use the following list format for EVERY significant step:\n1. **Step N: [Sub-Process Name]**\n   * **Initial State:** Target production rules or symbols.\n   * **Operation/Action:** Technical explanation of what was removed, replaced, or added, and the rationale behind it.\n   * **Resulting Rules:** Show the production rules formed after this step is completed.'}
 
 ## ${isID ? 'Perbandingan Grammar' : 'Grammar Comparison'}
 ${isID
-  ? 'Lakukan analisis komparatif antara grammar awal dan akhir dengan mencakup:\n* **Perubahan Komponen:** Bandingkan jumlah Variabel/Non-Terminal dan Aturan Produksi (apakah berkurang atau bertambah).\n* **Analisis Ekuivalensi:** Jelaskan mengapa bahasa (Language) yang dihasilkan oleh kedua grammar tetap sama (ekuivalen) meskipun bentuk mekanismenya berubah.\n* **Contoh Kasus:** Berikan satu contoh string pendek yang valid dan tunjukkan secara singkat bahwa string tersebut dapat diturunkan oleh kedua grammar.'
-  : 'Perform a comparative analysis between the initial and final grammar by including:\n* **Component Changes:** Compare the set of Variables/Non-Terminals and Production Rules (whether they are reduced or expanded).\n* **Equivalence Analysis:** Explain why the language generated by both grammars remains identical (equivalent) despite the structural changes.\n* **Example Case:** Provide one short valid string example and briefly show that it can be derived by both grammars.'}
+      ? 'Lakukan analisis komparatif antara grammar awal dan akhir dengan mencakup:\n* **Perubahan Komponen:** Bandingkan jumlah Variabel/Non-Terminal dan Aturan Produksi (apakah berkurang atau bertambah).\n* **Analisis Ekuivalensi:** Jelaskan mengapa bahasa (Language) yang dihasilkan oleh kedua grammar tetap sama (ekuivalen) meskipun bentuk mekanismenya berubah.\n* **Contoh Kasus:** Berikan satu contoh string pendek yang valid dan tunjukkan secara singkat bahwa string tersebut dapat diturunkan oleh kedua grammar.'
+      : 'Perform a comparative analysis between the initial and final grammar by including:\n* **Component Changes:** Compare the set of Variables/Non-Terminals and Production Rules (whether they are reduced or expanded).\n* **Equivalence Analysis:** Explain why the language generated by both grammars remains identical (equivalent) despite the structural changes.\n* **Example Case:** Provide one short valid string example and briefly show that it can be derived by both grammars.'}
 
 ## ${isID ? 'Kesimpulan' : 'Conclusion'}
 ${isID
-  ? 'Dua atau tiga kalimat yang menyimpulkan hasil akhir transformasi ini. Sebutkan secara spesifik relevansi bentuk akhir grammar ini dalam konteks hierarki Chomsky, proses parsing (seperti efisiensi implementasi pada LL/LR atau algoritma CYK jika relevan), atau pembuatan syntax analyzer pada compiler.'
-  : 'Two or three sentences summarizing the final outcome of this transformation. Specifically mention the relevance of this final grammar form within the Chomsky hierarchy, parsing processes (such as implementation efficiency in LL/LR or the CYK algorithm if relevant), or syntax analyzer construction in compilers.'}
+      ? 'Dua atau tiga kalimat yang menyimpulkan hasil akhir transformasi ini. Sebutkan secara spesifik relevansi bentuk akhir grammar ini dalam konteks hierarki Chomsky, proses parsing (seperti efisiensi implementasi pada LL/LR atau algoritma CYK jika relevan), atau pembuatan syntax analyzer pada compiler.'
+      : 'Two or three sentences summarizing the final outcome of this transformation. Specifically mention the relevance of this final grammar form within the Chomsky hierarchy, parsing processes (such as implementation efficiency in LL/LR or the CYK algorithm if relevant), or syntax analyzer construction in compilers.'}
 
 IMPORTANT: Use the exact markers # and ## as shown. Be precise and technically accurate.
 
@@ -465,6 +494,7 @@ function parseGrammarResponse(jsonText: string): GeminiGrammarJSON {
  * Throws NonGrammarError if the image is not grammar-related.
  */
 export async function analyzeGrammarImage(file: File): Promise<GeminiGrammarJSON> {
+  checkRateLimit();
   const apiKey = getApiKey();
   const model = getGrammarModel(apiKey);
   const imagePart = await fileToGenerativePart(file);
@@ -486,6 +516,7 @@ export async function analyzeGrammarText(
   problemText: string,
   algorithm: string
 ): Promise<GeminiGrammarJSON> {
+  checkRateLimit();
   const apiKey = getApiKey();
   const model = getGrammarModel(apiKey);
   try {
@@ -502,26 +533,27 @@ export async function analyzeGrammarText(
  */
 export async function analyzeGrammarTransformation(
   algorithm: string,
-  initialGrammar: { left: string; right: string[] }[],
-  finalGrammar: { left: string; right: string[] }[],
-  stepNarrations: string[],
+  initialRules: { left: string; right: string[] }[],
+  finalRules: { left: string; right: string[] }[],
+  narrations: string[],
   lang: 'EN' | 'ID' = 'EN',
-  problemContext?: string,
+  problemContext?: string
 ): Promise<string> {
+  checkRateLimit();
   const apiKey = getApiKey();
   const model = getTextModel(apiKey);
 
   const fmtGrammar = (g: { left: string; right: string[] }[]) =>
     g.map(r => `  ${r.left} → ${r.right.join(' | ')}`).join('\n');
 
-  const stepsText = stepNarrations
+  const stepsText = narrations
     .map((n, i) => `[${String(i).padStart(2, '0')}] ${n}`)
     .join('\n');
 
   const prompt = buildGrammarDeepAnalysisPrompt(
     algorithm,
-    fmtGrammar(initialGrammar),
-    fmtGrammar(finalGrammar),
+    fmtGrammar(initialRules),
+    fmtGrammar(finalRules),
     stepsText,
     lang,
     problemContext,

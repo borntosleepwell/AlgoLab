@@ -34,53 +34,61 @@ export function Navbar({ onScrollToAbout }: NavbarProps) {
 
   return (
     <header className="w-full border-b border-[#333333] px-8 py-6 flex justify-between items-center sticky top-0 z-50 bg-[#050505]">
-      
+
       {/* Left Area - Contextual back button or Logo */}
       <div className="flex items-center gap-8 w-1/3">
         {location.pathname !== '/' ? (
-           <button 
-             onClick={() => navigate('/')} 
-             className="font-mono text-sm font-bold uppercase tracking-widest hover:text-[#aaaaaa] transition-colors flex items-center gap-2 text-[#F2F2F2]"
-           >
-             <span className="text-lg leading-none">←</span> BACK
-           </button>
+          <button
+            onClick={() => navigate('/')}
+            className="font-mono text-sm font-bold uppercase tracking-widest hover:text-[#aaaaaa] transition-colors flex items-center gap-2 text-[#F2F2F2]"
+          >
+            <span className="text-lg leading-none">←</span> BACK
+          </button>
         ) : (
           <button
             onClick={() => navigate('/')}
             className="font-serif text-3xl italic flex items-center gap-3 text-[#F2F2F2] hover:opacity-80 transition-opacity"
           >
-              <img src="/logo.svg" alt="AlgoLab Logo" className="w-8 h-8" />
-              AlgoLab
+            <img src="/logo.svg" alt="AlgoLab Logo" className="w-8 h-8" />
+            AlgoLab
           </button>
         )}
       </div>
 
       {/* Center - Navigation (Brutalist monospace links) */}
       <nav className="hidden md:flex items-center justify-center gap-8 w-1/3">
-         {NAV_ITEMS.map((item) => (
-           <button
-             key={item}
-             onClick={() => handleNavClick(item)}
-             className={`font-mono text-xs uppercase font-bold tracking-[0.2em] transition-colors ${
-               location.pathname.toUpperCase().includes(item) || (item === 'ABOUT' && location.hash === '#about')
-                 ? 'text-[#F2F2F2]' 
-                 : 'text-[#aaaaaa] hover:text-[#A62533]'
-             }`}
-           >
-             {item}
-           </button>
-         ))}
+        {NAV_ITEMS.map((item) => (
+          <button
+            key={item}
+            onClick={() => handleNavClick(item)}
+            className={`font-mono text-xs uppercase font-bold tracking-[0.2em] transition-colors ${location.pathname.toUpperCase().includes(item) || (item === 'ABOUT' && location.hash === '#about')
+                ? 'text-[#F2F2F2]'
+                : 'text-[#aaaaaa] hover:text-[#A62533]'
+              }`}
+          >
+            {item}
+          </button>
+        ))}
       </nav>
 
-      {/* Right Area - Logo (if not on homepage) or empty */}
-      <div className="w-1/3 flex justify-end">
+      {/* Right Area - Logo (if not on homepage) and Feedback */}
+      <div className="w-1/3 flex justify-end items-center gap-4">
+        <a
+          href="https://forms.gle/Y5gx1DE8LnDG4sN5A"
+          target="_blank"
+          rel="noopener noreferrer"
+          title="Report an issue or give feedback"
+          className="hidden lg:flex font-mono text-[10px] uppercase font-bold tracking-widest px-4 py-2 border border-[#333333] hover:bg-[#A62533] hover:text-white hover:border-[#A62533] transition-all text-[#aaaaaa] rounded-[4px]"
+        >
+          FEEDBACK
+        </a>
         {location.pathname !== '/' && (
           <button
             onClick={() => navigate('/')}
-            className="font-serif text-3xl italic flex items-center gap-3 text-[#F2F2F2] hover:opacity-80 transition-opacity"
+            className="font-serif text-2xl md:text-3xl italic flex items-center gap-3 text-[#F2F2F2] hover:opacity-80 transition-opacity"
           >
-              <img src="/logo.svg" alt="AlgoLab Logo" className="w-8 h-8" />
-              AlgoLab
+            <img src="/logo.svg" alt="AlgoLab Logo" className="w-6 h-6 md:w-8 md:h-8" />
+            <span className="hidden md:inline">AlgoLab</span>
           </button>
         )}
       </div>
