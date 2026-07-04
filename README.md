@@ -18,6 +18,9 @@ It’s built by a student, for students.
 
 ---
 
+## Live Server
+https://algolab-web-329176197970.asia-southeast2.run.app/
+
 ## 🛠️ Core Features
 
 ### 1. Graph Intelligence (Vision AI)
