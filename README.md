@@ -1,6 +1,5 @@
 # ⚡ AlgoLab // Global Visualizer Sandbox
 
-![AlgoLab Hero Banner](https://img.shields.io/badge/Status-Live_on_Google_Cloud-green?style=for-the-badge&logo=googlecloud)
 ![JuaraVibeCoding](https://img.shields.io/badge/Submission-%23JuaraVibeCoding-purple?style=for-the-badge&logo=google)
 
 **AlgoLab** is an interactive, brutalist-styled educational laboratory designed to strip away the complexities of computer science concepts and make algorithms visually digestible. Built for the **Google for Developers #JuaraVibeCoding** hackathon.
