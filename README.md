@@ -18,7 +18,7 @@ It’s built by a student, for students.
 ---
 
 ## Live Server
-https://algolab-web-329176197970.asia-southeast2.run.app/
+https://algo-lab-fawn.vercel.app/
 
 ---
 
